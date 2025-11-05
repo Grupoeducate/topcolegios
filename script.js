@@ -139,7 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return 'level-insuficiente';
     }
 
-    function displayResults(dataToDisplay) {
+        function displayResults(dataToDisplay) {
         resultsContainer.innerHTML = '';
         if (!dataToDisplay || dataToDisplay.length === 0) {
             resultsContainer.innerHTML = '<p>No se encontraron resultados para los criterios seleccionados.</p>';
@@ -148,9 +148,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const table = document.createElement('table');
         table.className = 'results-table';
+
+        // Añadimos la nueva columna "Puesto" al encabezado de la tabla
         table.innerHTML = `
             <thead>
                 <tr>
+                    <th class="rank-col">Puesto</th>
                     <th>Institución</th>
                     <th>Municipio</th>
                     <th>Puntaje Global</th>
@@ -158,17 +161,40 @@ document.addEventListener('DOMContentLoaded', () => {
                 </tr>
             </thead>
         `;
+
         const tbody = document.createElement('tbody');
         dataToDisplay.forEach(school => {
             const row = document.createElement('tr');
+            
+            // Lectura de datos del JSON, incluyendo el puesto
+            const puesto = school['PTO.'] || 'N/A';
             const puntaje = parseInt(school['PUNT. GLOBAL'], 10) || 0;
             const institucion = school['INSTITUCIÓN'] || 'N/A';
             const municipio = school['MUNICIPIO'] || 'N/A';
             const sector = school['SECTOR'] || 'N/A';
+            
+            const lc = school['LC'] || 'N/A';
+            const mat = school['MAT'] || 'N/A';
+            const sc = school['SC'] || 'N/A';
+            const nat = school['NAT'] || 'N/A';
+            const ing = school['ING'] || 'N/A';
+            
             const levelClass = getPuntajeGlobalLevelClass(puntaje);
             const barWidth = (puntaje / 500) * 100;
+            
+            // Construcción del HTML para la fila, añadiendo la celda del puesto al principio
             row.innerHTML = `
-                <td>${institucion}</td>
+                <td class="rank-col"><strong>#${puesto}</strong></td>
+                <td>
+                    <strong>${institucion}</strong>
+                    <div class="area-scores">
+                        <span>LC: ${lc}</span>
+                        <span>MAT: ${mat}</span>
+                        <span>SC: ${sc}</span>
+                        <span>NAT: ${nat}</span>
+                        <span>ING: ${ing}</span>
+                    </div>
+                </td>
                 <td>${municipio}</td>
                 <td>
                     <div class="score-bar-container">
@@ -183,4 +209,6 @@ document.addEventListener('DOMContentLoaded', () => {
         table.appendChild(tbody);
         resultsContainer.appendChild(table);
     }
+
 });
+
