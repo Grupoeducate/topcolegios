@@ -1,153 +1,81 @@
-/* ============== CONFIGURACIÓN GENERAL Y FUENTES ============== */
-body {
-    font-family: 'Barlow Condensed', sans-serif;
-    margin: 0;
-    background-color: #f4f4f9; /* Un fondo gris claro para que el contenido resalte */
-    color: #333; /* Color de texto principal */
-    line-height: 1.6;
-}
+/* ============== NUEVOS ESTILOS PARA LA INTERFAZ MEJORADA ============== */
 
-/* ============== DISEÑO DEL ENCABEZADO Y NAVEGACIÓN ============== */
-.header {
-    background-color: #ffffff; /* Fondo blanco para el encabezado */
-    padding: 15px 30px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 1px solid #ddd;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05); /* Sombra sutil para dar profundidad */
-}
-
-.logo {
-    height: 50px; /* Altura del logo, ajústala si es necesario */
-}
-
-.header nav a {
-    margin: 0 15px;
-    color: #005A9C; /* Color azul corporativo para los enlaces */
-    text-decoration: none;
-    font-weight: 700;
-    font-size: 18px;
-    padding-bottom: 5px;
-    border-bottom: 3px solid transparent; /* Borde inferior para el efecto hover */
-    transition: border-bottom-color 0.3s;
-}
-
-/* Estilo para el enlace de la página activa y al pasar el ratón */
-.header nav a.active, .header nav a:hover {
-    border-bottom-color: #007BFF; /* Un azul más brillante para destacar */
-}
-
-/* ============== DISEÑO DEL CONTENEDOR PRINCIPAL ============== */
-.container {
-    max-width: 1000px; /* Ancho máximo del contenido */
-    margin: 40px auto; /* Centrado horizontalmente con margen superior/inferior */
-    padding: 30px;
-    background-color: #fff;
+/* Estilo para las secciones de filtros */
+.filter-section {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
     border-radius: 8px;
-    box-shadow: 0 0 15px rgba(0,0,0,0.08);
+    padding: 20px;
+    margin-bottom: 30px;
 }
 
-h1 {
-    color: #005A9C; /* Título principal en azul corporativo */
+.filter-section h2 {
     margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 22px;
+    color: #343a40;
 }
 
-/* ============== ESTILOS PARA LA BÚSQUEDA Y RESULTADOS ============== */
-.search-container {
+.filter-controls {
     display: flex;
-    gap: 10px;
-    margin: 30px 0;
+    gap: 15px;
+    align-items: center;
 }
 
-input[type="text"] {
-    flex-grow: 1; /* El campo de texto ocupa el espacio disponible */
+/* Estilo para los menús desplegables (combo box) */
+select {
     padding: 12px;
     font-size: 16px;
     border: 1px solid #ccc;
     border-radius: 5px;
-    font-family: 'Barlow Condensed', sans-serif; /* Heredar la fuente principal */
+    font-family: 'Barlow Condensed', sans-serif;
+    flex-grow: 1; /* Permite que los selects se estiren */
 }
 
-button {
-    padding: 12px 25px;
-    font-size: 16px;
-    font-weight: 700;
-    color: #fff;
-    background-color: #007BFF; /* Color primario para el botón */
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
+select:disabled {
+    background-color: #e9ecef;
+    cursor: not-allowed;
 }
 
-button:hover {
-    background-color: #0056b3; /* Color más oscuro al pasar el ratón */
-}
-
-/* ============== ESTILOS PARA LA TABLA DE RESULTADOS ============== */
-.results-table {
-    width: 100%;
-    border-collapse: collapse; /* Bordes de la tabla unidos */
-    margin-top: 20px;
-}
-
-.results-table th, .results-table td {
-    border: 1px solid #ddd;
-    padding: 14px;
-    text-align: left;
-    vertical-align: middle;
-}
-
-.results-table th {
-    background-color: #005A9C; /* Fondo azul para los encabezados de la tabla */
-    color: white;
-    font-weight: 700;
-}
-
-/* ============== ESTILOS PARA LAS BARRAS DE PUNTAJE (VISUALIZACIÓN DE DATOS) ============== */
-.score-bar-container {
-    width: 100%;
-    min-width: 120px; /* Ancho mínimo para que la barra sea visible */
-    background-color: #e9ecef; /* Color de fondo de la barra */
-    border-radius: 5px;
-    height: 24px;
-    position: relative; /* Necesario para posicionar el texto dentro */
-    display: flex;
-    align-items: center;
-}
-
-.score-bar {
-    height: 100%;
-    border-radius: 5px;
-    transition: width 0.5s ease-in-out; /* Animación suave al cargar */
-}
-
-.score-bar-text {
+/* Contenedor para las sugerencias de la búsqueda por nombre */
+#suggestion-box {
     position: absolute;
-    left: 10px; /* Posición del texto del puntaje */
-    color: white;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #fff;
+    border: 1px solid #ccc;
+    z-index: 1000;
+    max-height: 250px;
+    overflow-y: auto;
+    display: none; /* Oculto por defecto */
+}
+
+.suggestion-item {
+    padding: 12px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+}
+
+.suggestion-item:last-child {
+    border-bottom: none;
+}
+
+.suggestion-item:hover {
+    background-color: #f0f0f0;
+}
+
+/* Estilo para el contenedor de alertas */
+.alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    color: #fff;
     font-weight: bold;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.5); /* Sombra para mejorar la legibilidad */
 }
 
-/* Colores de nivel de desempeño basados en la imagen */
-.level-avanzado { background-color: #28a745; }      /* Verde: 350-500 */
-.level-satisfactorio { background-color: #007bff; } /* Azul: 270-349 */
-.level-minimo { 
-    background-color: #ffc107;         /* Amarillo: 192-269 */
-    color: #333;                       /* Texto oscuro para contraste */
-    text-shadow: none;                 /* Sin sombra de texto */
-}
-.level-insuficiente { background-color: #dc3545; }   /* Rojo: 0-191 */
-
-
-/* ============== PIE DE PÁGINA ============== */
-.footer {
-    text-align: center;
-    padding: 20px;
-    margin-top: 40px;
-    color: #777;
-    font-size: 14px;
-    border-top: 1px solid #eee;
+.alert-danger {
+    background-color: #dc3545;
+    border-color: #d32535;
 }
