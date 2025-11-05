@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(data => {
             schoolData = data;
             populateFilters();
-            console.log('Datos cargados y filtros poblados.');
+            console.log('Datos de colegios cargados y filtros poblados.');
         })
         .catch(error => {
             console.error(error);
@@ -27,19 +27,20 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
     function populateFilters() {
-        // Obtenemos listas únicas de departamentos y municipios
         const departamentos = [...new Set(schoolData.map(s => s['DEPARTAMENTO']))].sort();
         
         departamentos.forEach(dep => {
-            const option = document.createElement('option');
-            option.value = dep;
-            option.textContent = dep;
-            departamentoSelect.appendChild(option);
+            if (dep) { // Evitar departamentos nulos o vacíos
+                const option = document.createElement('option');
+                option.value = dep;
+                option.textContent = dep;
+                departamentoSelect.appendChild(option);
+            }
         });
 
         departamentoSelect.addEventListener('change', () => {
             const selectedDep = departamentoSelect.value;
-            municipioSelect.innerHTML = '<option value="">Selecciona un Municipio</option>'; // Reiniciar
+            municipioSelect.innerHTML = '<option value="">Selecciona un Municipio</option>';
             
             if (selectedDep) {
                 const municipios = [...new Set(schoolData
@@ -47,10 +48,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     .map(s => s['MUNICIPIO']))].sort();
                 
                 municipios.forEach(mun => {
-                    const option = document.createElement('option');
-                    option.value = mun;
-                    option.textContent = mun;
-                    municipioSelect.appendChild(option);
+                    if (mun) { // Evitar municipios nulos o vacíos
+                        const option = document.createElement('option');
+                        option.value = mun;
+                        option.textContent = mun;
+                        municipioSelect.appendChild(option);
+                    }
                 });
                 municipioSelect.disabled = false;
             } else {
@@ -63,6 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Búsqueda por ubicación (filtros)
     filterButton.addEventListener('click', () => {
+        clearAlert(); // Limpiar alertas anteriores
         const dep = departamentoSelect.value;
         const mun = municipioSelect.value;
 
@@ -71,7 +75,6 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         
-        clearAlert();
         let filteredData = schoolData.filter(s => s['DEPARTAMENTO'] === dep);
         if (mun) {
             filteredData = filteredData.filter(s => s['MUNICIPIO'] === mun);
@@ -81,6 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Búsqueda por nombre (autocompletado)
     nameSearchInput.addEventListener('input', () => {
+        clearAlert(); // Limpiar alertas al empezar a escribir
         const query = nameSearchInput.value.toLowerCase().trim();
         suggestionBox.innerHTML = '';
         if (query.length < 3) {
@@ -97,9 +101,9 @@ document.addEventListener('DOMContentLoaded', () => {
             suggestions.forEach(school => {
                 const div = document.createElement('div');
                 div.className = 'suggestion-item';
-                div.textContent = school['INSTITUCIÓN'];
+                div.textContent = `${school['INSTITUCIÓN']} (${school['MUNICIPIO']})`;
                 div.addEventListener('click', () => {
-                    nameSearchInput.value = school['INSTITUCIÓN'];
+                    nameSearchInput.value = '';
                     suggestionBox.style.display = 'none';
                     displayResults([school]); // Muestra solo el colegio seleccionado
                 });
@@ -113,18 +117,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Ocultar sugerencias si se hace clic fuera
     document.addEventListener('click', (e) => {
-        if (!nameSearchInput.contains(e.target)) {
+        if (suggestionBox && !suggestionBox.contains(e.target) && e.target !== nameSearchInput) {
             suggestionBox.style.display = 'none';
         }
     });
-
-    // (El resto de las funciones `displayResults` y `getPuntajeGlobalLevelClass` se mantienen igual que en la versión anterior)
-    function displayResults(dataToDisplay) {
-        // ... (código sin cambios)
-    }
-    function getPuntajeGlobalLevelClass(score) {
-        // ... (código sin cambios)
-    }
 
     // Funciones de alerta
     function showAlert(message) {
@@ -134,9 +130,8 @@ document.addEventListener('DOMContentLoaded', () => {
         alertContainer.innerHTML = '';
     }
 
-    // --- Pega aquí las funciones displayResults y getPuntajeGlobalLevelClass de la respuesta anterior ---
-    // Por brevedad, no las repito, pero deben estar aquí para que el código funcione.
-    // Aquí están de nuevo para asegurar que lo tengas todo:
+    // --- Funciones de renderizado que deben estar al final ---
+    
     function getPuntajeGlobalLevelClass(score) {
         if (score >= 350) return 'level-avanzado';
         if (score >= 270) return 'level-satisfactorio';
@@ -146,7 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function displayResults(dataToDisplay) {
         resultsContainer.innerHTML = '';
-        if (dataToDisplay.length === 0) {
+        if (!dataToDisplay || dataToDisplay.length === 0) {
             resultsContainer.innerHTML = '<p>No se encontraron resultados para los criterios seleccionados.</p>';
             return;
         }
