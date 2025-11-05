@@ -300,3 +300,10 @@ button:hover {
     width: 200px; /* Ancho fijo para el botón */
     margin-top: 10px;
 }
+/* ============== NUEVO ESTILO PARA LA COLUMNA DE RANKING ============== */
+.rank-col {
+    width: 80px; /* Ancho fijo para la columna del puesto */
+    text-align: center !important; /* Forzar la alineación al centro */
+    font-size: 20px; /* Un poco más grande para destacar */
+}
+
