@@ -1,0 +1,153 @@
+/* ============== CONFIGURACIÓN GENERAL Y FUENTES ============== */
+body {
+    font-family: 'Barlow Condensed', sans-serif;
+    margin: 0;
+    background-color: #f4f4f9; /* Un fondo gris claro para que el contenido resalte */
+    color: #333; /* Color de texto principal */
+    line-height: 1.6;
+}
+
+/* ============== DISEÑO DEL ENCABEZADO Y NAVEGACIÓN ============== */
+.header {
+    background-color: #ffffff; /* Fondo blanco para el encabezado */
+    padding: 15px 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #ddd;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05); /* Sombra sutil para dar profundidad */
+}
+
+.logo {
+    height: 50px; /* Altura del logo, ajústala si es necesario */
+}
+
+.header nav a {
+    margin: 0 15px;
+    color: #005A9C; /* Color azul corporativo para los enlaces */
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 18px;
+    padding-bottom: 5px;
+    border-bottom: 3px solid transparent; /* Borde inferior para el efecto hover */
+    transition: border-bottom-color 0.3s;
+}
+
+/* Estilo para el enlace de la página activa y al pasar el ratón */
+.header nav a.active, .header nav a:hover {
+    border-bottom-color: #007BFF; /* Un azul más brillante para destacar */
+}
+
+/* ============== DISEÑO DEL CONTENEDOR PRINCIPAL ============== */
+.container {
+    max-width: 1000px; /* Ancho máximo del contenido */
+    margin: 40px auto; /* Centrado horizontalmente con margen superior/inferior */
+    padding: 30px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.08);
+}
+
+h1 {
+    color: #005A9C; /* Título principal en azul corporativo */
+    margin-top: 0;
+}
+
+/* ============== ESTILOS PARA LA BÚSQUEDA Y RESULTADOS ============== */
+.search-container {
+    display: flex;
+    gap: 10px;
+    margin: 30px 0;
+}
+
+input[type="text"] {
+    flex-grow: 1; /* El campo de texto ocupa el espacio disponible */
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-family: 'Barlow Condensed', sans-serif; /* Heredar la fuente principal */
+}
+
+button {
+    padding: 12px 25px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+    background-color: #007BFF; /* Color primario para el botón */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #0056b3; /* Color más oscuro al pasar el ratón */
+}
+
+/* ============== ESTILOS PARA LA TABLA DE RESULTADOS ============== */
+.results-table {
+    width: 100%;
+    border-collapse: collapse; /* Bordes de la tabla unidos */
+    margin-top: 20px;
+}
+
+.results-table th, .results-table td {
+    border: 1px solid #ddd;
+    padding: 14px;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.results-table th {
+    background-color: #005A9C; /* Fondo azul para los encabezados de la tabla */
+    color: white;
+    font-weight: 700;
+}
+
+/* ============== ESTILOS PARA LAS BARRAS DE PUNTAJE (VISUALIZACIÓN DE DATOS) ============== */
+.score-bar-container {
+    width: 100%;
+    min-width: 120px; /* Ancho mínimo para que la barra sea visible */
+    background-color: #e9ecef; /* Color de fondo de la barra */
+    border-radius: 5px;
+    height: 24px;
+    position: relative; /* Necesario para posicionar el texto dentro */
+    display: flex;
+    align-items: center;
+}
+
+.score-bar {
+    height: 100%;
+    border-radius: 5px;
+    transition: width 0.5s ease-in-out; /* Animación suave al cargar */
+}
+
+.score-bar-text {
+    position: absolute;
+    left: 10px; /* Posición del texto del puntaje */
+    color: white;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5); /* Sombra para mejorar la legibilidad */
+}
+
+/* Colores de nivel de desempeño basados en la imagen */
+.level-avanzado { background-color: #28a745; }      /* Verde: 350-500 */
+.level-satisfactorio { background-color: #007bff; } /* Azul: 270-349 */
+.level-minimo { 
+    background-color: #ffc107;         /* Amarillo: 192-269 */
+    color: #333;                       /* Texto oscuro para contraste */
+    text-shadow: none;                 /* Sin sombra de texto */
+}
+.level-insuficiente { background-color: #dc3545; }   /* Rojo: 0-191 */
+
+
+/* ============== PIE DE PÁGINA ============== */
+.footer {
+    text-align: center;
+    padding: 20px;
+    margin-top: 40px;
+    color: #777;
+    font-size: 14px;
+    border-top: 1px solid #eee;
+}

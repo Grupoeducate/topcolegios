@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <!-- ============== METADATOS Y CONFIGURACIÓN ============== -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Consulta de resultados de colegios en Colombia - Grupo Edúcate Colombia">
+    <meta name="author" content="Grupo Edúcate Colombia">
+    
+    <title>Consulta Básica de Colegios - Grupo Edúcate Colombia</title>
+    
+    <!-- ============== ENLACES A FUENTES Y HOJAS DE ESTILO ============== -->
+    
+    <!-- Importar la fuente Barlow Condensed desde Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Enlace al archivo de estilos CSS que crearemos después -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- ============== ENCABEZADO Y NAVEGACIÓN PRINCIPAL ============== -->
+    <header class="header">
+        <!-- Logo de la empresa -->
+        <img src="logo.png" alt="Logo del Grupo Edúcate Colombia" class="logo">
+        
+        <!-- Menú de navegación para cambiar entre páginas -->
+        <nav>
+            <a href="index.html" class="active">Consulta Básica</a>
+            <a href="comparador.html">Comparador Avanzado</a>
+        </nav>
+    </header>
+
+    <!-- ============== CONTENIDO PRINCIPAL DE LA PÁGINA ============== -->
+    <main class="container">
+        
+        <!-- Título y descripción de la sección -->
+        <h1>Consulta de Resultados de Colegios</h1>
+        <p>Utiliza la barra de búsqueda para encontrar una institución por su nombre, municipio o departamento y visualizar sus resultados de forma rápida y clara.</p>
+        
+        <!-- Contenedor de la barra de búsqueda y el botón -->
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Ejemplo: Colegio San Patricio, Bogotá, etc.">
+            <button id="searchButton">Buscar</button>
+        </div>
+        
+        <!-- Contenedor donde JavaScript insertará la tabla de resultados -->
+        <div id="results-container">
+            <!-- Mensaje inicial o resultados de la búsqueda aparecerán aquí -->
+            <p>Ingresa un término de búsqueda para ver los resultados.</p>
+        </div>
+        
+    </main>
+    
+    <!-- ============== PIE DE PÁGINA (OPCIONAL) ============== -->
+    <footer class="footer">
+        <p>&copy; 2025 Grupo Edúcate Colombia. Todos los derechos reservados.</p>
+    </footer>
+
+    <!-- ============== ENLACE AL ARCHIVO JAVASCRIPT ============== -->
+    <!-- Se coloca al final del body para que la página cargue más rápido -->
+    <script src="script.js"></script>
+
+</body>
+</html>
