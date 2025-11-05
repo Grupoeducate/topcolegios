@@ -1,15 +1,21 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const searchInput = document.getElementById('comparatorSearchInput');
-    const suggestionBox = document.getElementById('suggestion-box');
-    const selectedTagsContainer = document.getElementById('selected-schools-tags');
+    // ============== SELECCIÓN DE ELEMENTOS DEL DOM ==============
+    const colegio1Input = document.getElementById('colegio1Input');
+    const suggestionBox1 = document.getElementById('suggestion-box1');
+    const colegio2Input = document.getElementById('colegio2Input');
+    const suggestionBox2 = document.getElementById('suggestion-box2');
+    const compareButton = document.getElementById('compareButton');
     const comparisonContainer = document.getElementById('comparison-table-container');
+    const alertContainer = document.getElementById('alert-container');
 
     let schoolData = [];
-    let selectedSchools = new Map();
+    let selectedSchool1 = null;
+    let selectedSchool2 = null;
 
+    // ============== CARGA DE DATOS ==============
     fetch('results.json')
         .then(response => {
-            if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
+            if (!response.ok) throw new Error('Error al cargar `results.json`');
             return response.json();
         })
         .then(data => {
@@ -17,89 +23,61 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log('Datos cargados para el comparador.');
         });
 
-    const getPuntajeGlobalLevelClass = (score) => {
-        if (score >= 350) return 'level-avanzado';
-        if (score >= 270) return 'level-satisfactorio';
-        if (score >= 192) return 'level-minimo';
-        return 'level-insuficiente';
-    };
+    // ============== LÓGICA DE BÚSQUEDA CON AUTOCOMPLETADO ==============
 
-    const getAreaLevelClass = (area, score) => {
-        const ranges = {
-            'LC': { min: 36, sat: 51, avan: 66 },
-            'MAT': { min: 36, sat: 51, avan: 71 },
-            'SC': { min: 41, sat: 56, avan: 71 },
-            'NAT': { min: 41, sat: 56, avan: 71 },
-            'ING': { min: 37, sat: 58, avan: 71 }
-        };
-        const numScore = parseInt(score, 10);
-        if (!ranges[area] || isNaN(numScore)) return 'level-insuficiente';
-        if (numScore >= ranges[area].avan) return 'level-avanzado';
-        if (numScore >= ranges[area].sat) return 'level-satisfactorio';
-        if (numScore >= ranges[area].min) return 'level-minimo';
-        return 'level-insuficiente';
-    };
+    // Función genérica para manejar la lógica de autocompletado
+    function setupAutocomplete(inputElement, suggestionBoxElement, onSelectCallback) {
+        inputElement.addEventListener('input', () => {
+            const query = inputElement.value.toLowerCase().trim();
+            suggestionBoxElement.innerHTML = '';
+            if (query.length < 3) {
+                suggestionBoxElement.style.display = 'none';
+                return;
+            }
 
-    searchInput.addEventListener('input', () => {
-        const query = searchInput.value.toLowerCase().trim();
-        suggestionBox.innerHTML = '';
-        suggestionBox.style.display = 'none';
-        if (query.length < 3) return;
+            const suggestions = schoolData.filter(s => 
+                s['INSTITUCIÓN'] && s['INSTITUCIÓN'].toLowerCase().includes(query)
+            ).slice(0, 5);
 
-        const suggestions = schoolData.filter(s => 
-            s['INSTITUCIÓN'] && s['INSTITUCIÓN'].toLowerCase().includes(query)
-        ).slice(0, 5);
-
-        if (suggestions.length > 0) {
-            suggestions.forEach(school => {
-                const div = document.createElement('div');
-                div.textContent = `${school['INSTITUCIÓN']} (${school['MUNICIPIO']})`;
-                div.className = 'suggestion-item';
-                div.addEventListener('click', () => addSchoolToComparison(school));
-                suggestionBox.appendChild(div);
-            });
-            suggestionBox.style.display = 'block';
-        }
-    });
-
-    const addSchoolToComparison = (school) => {
-        const schoolId = school['PTO.'];
-        if (!selectedSchools.has(schoolId)) {
-            selectedSchools.set(schoolId, school);
-            renderUI();
-        }
-        searchInput.value = '';
-        suggestionBox.style.display = 'none';
-    };
-
-    const removeSchoolFromComparison = (schoolId) => {
-        selectedSchools.delete(schoolId);
-        renderUI();
-    };
-
-    function renderUI() {
-        renderTags();
-        renderComparisonTable();
-    }
-    
-    function renderTags() {
-        selectedTagsContainer.innerHTML = '';
-        selectedSchools.forEach(school => {
-            const schoolId = school['PTO.'];
-            const tag = document.createElement('div');
-            tag.className = 'tag';
-            tag.innerHTML = `<span>${school['INSTITUCIÓN']}</span><span class="remove-tag" data-id="${schoolId}"> &times;</span>`;
-            tag.querySelector('.remove-tag').addEventListener('click', () => removeSchoolFromComparison(schoolId));
-            selectedTagsContainer.appendChild(tag);
+            if (suggestions.length > 0) {
+                suggestions.forEach(school => {
+                    const div = document.createElement('div');
+                    div.className = 'suggestion-item';
+                    div.textContent = school['INSTITUCIÓN'];
+                    div.addEventListener('click', () => {
+                        inputElement.value = school['INSTITUCIÓN'];
+                        suggestionBoxElement.style.display = 'none';
+                        onSelectCallback(school);
+                    });
+                    suggestionBoxElement.appendChild(div);
+                });
+                suggestionBoxElement.style.display = 'block';
+            }
         });
     }
 
-    function renderComparisonTable() {
-        if (selectedSchools.size === 0) {
-            comparisonContainer.innerHTML = '<p>Añade colegios desde la barra de búsqueda para empezar a comparar.</p>';
+    // Configurar autocompletado para ambos inputs
+    setupAutocomplete(colegio1Input, suggestionBox1, (school) => { selectedSchool1 = school; });
+    setupAutocomplete(colegio2Input, suggestionBox2, (school) => { selectedSchool2 = school; });
+
+    // Ocultar sugerencias si se hace clic fuera
+    document.addEventListener('click', (e) => {
+        if (!colegio1Input.contains(e.target)) suggestionBox1.style.display = 'none';
+        if (!colegio2Input.contains(e.target)) suggestionBox2.style.display = 'none';
+    });
+
+    // ============== LÓGICA DE COMPARACIÓN Y RENDERIZADO ==============
+    
+    compareButton.addEventListener('click', () => {
+        clearAlert();
+        if (!selectedSchool1 || !selectedSchool2) {
+            showAlert('Por favor, selecciona dos colegios de las sugerencias para poder comparar.');
             return;
         }
+        renderComparisonTable(selectedSchool1, selectedSchool2);
+    });
 
+    function renderComparisonTable(school1, school2) {
         const areas = [
             { key: 'PUNT. GLOBAL', name: 'Puntaje Global', max: 500 },
             { key: 'LC', name: 'Lectura Crítica', max: 100 },
@@ -109,15 +87,20 @@ document.addEventListener('DOMContentLoaded', () => {
             { key: 'ING', name: 'Inglés', max: 100 }
         ];
 
-        let tableHTML = '<table class="comparison-table"><thead><tr><th>Área de Conocimiento</th>';
-        selectedSchools.forEach(school => {
-            tableHTML += `<th>${school['INSTITUCIÓN']}<br><small>${school['MUNICIPIO']}</small></th>`;
-        });
-        tableHTML += '</tr></thead><tbody>';
+        let tableHTML = `
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Área de Conocimiento</th>
+                        <th>${school1['INSTITUCIÓN']}</th>
+                        <th>${school2['INSTITUCIÓN']}</th>
+                    </tr>
+                </thead>
+                <tbody>`;
 
         areas.forEach(area => {
             tableHTML += `<tr><td><strong>${area.name}</strong></td>`;
-            selectedSchools.forEach(school => {
+            [school1, school2].forEach(school => {
                 const score = school[area.key] || 0;
                 const numScore = parseInt(score, 10) || 0;
                 const levelClass = area.key === 'PUNT. GLOBAL' ? getPuntajeGlobalLevelClass(numScore) : getAreaLevelClass(area.key, numScore);
@@ -136,6 +119,26 @@ document.addEventListener('DOMContentLoaded', () => {
         tableHTML += '</tbody></table>';
         comparisonContainer.innerHTML = tableHTML;
     }
-    
-    renderUI();
+
+    // --- Funciones de ayuda (niveles y alertas) ---
+    function showAlert(message) {
+        alertContainer.innerHTML = `<div class="alert alert-danger">${message}</div>`;
+    }
+    function clearAlert() {
+        alertContainer.innerHTML = '';
+    }
+    const getPuntajeGlobalLevelClass = (score) => {
+        if (score >= 350) return 'level-avanzado';
+        if (score >= 270) return 'level-satisfactorio';
+        if (score >= 192) return 'level-minimo';
+        return 'level-insuficiente';
+    };
+    const getAreaLevelClass = (area, score) => {
+        const ranges = { 'LC':{m:36,s:51,a:66}, 'MAT':{m:36,s:51,a:71}, 'SC':{m:41,s:56,a:71}, 'NAT':{m:41,s:56,a:71}, 'ING':{m:37,s:58,a:71} };
+        if (!ranges[area] || isNaN(score)) return 'level-insuficiente';
+        if (score >= ranges[area].a) return 'level-avanzado';
+        if (score >= ranges[area].s) return 'level-satisfactorio';
+        if (score >= ranges[area].m) return 'level-minimo';
+        return 'level-insuficiente';
+    };
 });
