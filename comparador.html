@@ -1,186 +1,73 @@
-// Se ejecuta cuando todo el contenido HTML de la página ha sido cargado.
-document.addEventListener('DOMContentLoaded', () => {
-
-    // ============== SELECCIÓN DE ELEMENTOS DEL DOM ==============
-    const searchInput = document.getElementById('comparatorSearchInput');
-    const suggestionBox = document.getElementById('suggestion-box');
-    const selectedTagsContainer = document.getElementById('selected-schools-tags');
-    const comparisonContainer = document.getElementById('comparison-table-container');
-
-    // Variables para almacenar los datos y los colegios seleccionados.
-    let schoolData = [];
-    // Usamos un Map para gestionar los colegios seleccionados. Es más eficiente para añadir/eliminar.
-    let selectedSchools = new Map();
-
-    // ============== CARGA DE DATOS ==============
-    fetch('results.json')
-        .then(response => {
-            if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
-            return response.json();
-        })
-        .then(data => {
-            schoolData = data;
-            console.log('Datos cargados para el comparador.');
-        })
-        .catch(error => {
-            console.error('Error al cargar datos para el comparador:', error);
-            comparisonContainer.innerHTML = '<p style="color: red;"><strong>Error:</strong> No se pudo cargar el archivo `results.json`.</p>';
-        });
-
-    // ============== LÓGICA DE NIVELES Y VISUALIZACIÓN ==============
-
-    /**
-     * Devuelve la clase CSS del nivel de desempeño para el Puntaje Global.
-     * @param {number} score - El puntaje.
-     * @returns {string} La clase CSS correspondiente.
-     */
-    const getPuntajeGlobalLevelClass = (score) => {
-        if (score >= 350) return 'level-avanzado';
-        if (score >= 270) return 'level-satisfactorio';
-        if (score >= 192) return 'level-minimo';
-        return 'level-insuficiente';
-    };
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <!-- ============== METADATOS Y CONFIGURACIÓN ============== -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Comparador avanzado de resultados de colegios en Colombia - Grupo Edúcate Colombia">
+    <meta name="author" content="Grupo Edúcate Colombia">
     
-    /**
-     * Devuelve la clase CSS del nivel de desempeño para un área específica.
-     * Los rangos están basados en la imagen proporcionada.
-     * @param {string} area - La clave del área (ej: 'lecturaCritica').
-     * @param {number} score - El puntaje en esa área.
-     * @returns {string} La clase CSS correspondiente.
-     */
-    const getAreaLevelClass = (area, score) => {
-        const ranges = {
-            lecturaCritica: { min: 36, sat: 51, avan: 66 },
-            matematicas:    { min: 36, sat: 51, avan: 71 },
-            sociales:       { min: 41, sat: 56, avan: 71 },
-            naturales:      { min: 41, sat: 56, avan: 71 },
-            ingles:         { min: 37, sat: 58, avan: 71 }
-        };
-        if (!ranges[area] || score === null || score === undefined) return 'level-insuficiente';
-        if (score >= ranges[area].avan) return 'level-avanzado';
-        if (score >= ranges[area].sat) return 'level-satisfactorio';
-        if (score >= ranges[area].min) return 'level-minimo';
-        return 'level-insuficiente';
-    };
-
-    // ============== LÓGICA DE INTERACCIÓN (BÚSQUEDA Y SELECCIÓN) ==============
+    <title>Comparador Avanzado - Grupo Edúcate Colombia</title>
     
-    // Evento que se dispara cada vez que el usuario escribe en la barra de búsqueda.
-    searchInput.addEventListener('input', () => {
-        const query = searchInput.value.toLowerCase().trim();
-        suggestionBox.innerHTML = '';
-        suggestionBox.style.display = 'none';
-
-        if (query.length < 3) return; // No buscar si la consulta es muy corta.
-
-        const suggestions = schoolData.filter(s => 
-            s.institucion && s.institucion.toLowerCase().includes(query)
-        ).slice(0, 5); // Mostramos solo las primeras 5 sugerencias.
-
-        if (suggestions.length > 0) {
-            suggestions.forEach(school => {
-                const div = document.createElement('div');
-                div.textContent = `${school.institucion} (${school.municipio})`;
-                div.className = 'suggestion-item';
-                div.addEventListener('click', () => addSchoolToComparison(school));
-                suggestionBox.appendChild(div);
-            });
-            suggestionBox.style.display = 'block';
-        }
-    });
-
-    /**
-     * Añade un colegio a la lista de comparación.
-     * @param {object} school - El objeto del colegio a añadir.
-     */
-    const addSchoolToComparison = (school) => {
-        if (!selectedSchools.has(school.puesto)) { // Usamos el 'puesto' como ID único.
-            selectedSchools.set(school.puesto, school);
-            renderUI(); // Actualizamos la interfaz completa.
-        }
-        searchInput.value = '';
-        suggestionBox.style.display = 'none';
-    };
-
-    /**
-     * Elimina un colegio de la lista de comparación.
-     * @param {number} schoolPuesto - El 'puesto' (ID) del colegio a eliminar.
-     */
-    const removeSchoolFromComparison = (schoolPuesto) => {
-        selectedSchools.delete(schoolPuesto);
-        renderUI(); // Actualizamos la interfaz completa.
-    };
-
-    // ============== RENDERIZADO DE LA INTERFAZ ==============
-
-    /**
-     * Función principal que actualiza toda la interfaz (etiquetas y tabla).
-     */
-    function renderUI() {
-        renderTags();
-        renderComparisonTable();
-    }
+    <!-- ============== ENLACES A FUENTES Y HOJAS DE ESTILO (RUTAS CORREGIDAS) ============== -->
     
-    /**
-     * Dibuja las etiquetas de los colegios seleccionados.
-     */
-    function renderTags() {
-        selectedTagsContainer.innerHTML = '';
-        selectedSchools.forEach(school => {
-            const tag = document.createElement('div');
-            tag.className = 'tag';
-            tag.innerHTML = `<span>${school.institucion}</span><span class="remove-tag" data-puesto="${school.puesto}"> &times;</span>`;
-            tag.querySelector('.remove-tag').addEventListener('click', () => removeSchoolFromComparison(school.puesto));
-            selectedTagsContainer.appendChild(tag);
-        });
-    }
-
-    /**
-     * Dibuja la tabla de comparación completa.
-     */
-    function renderComparisonTable() {
-        if (selectedSchools.size === 0) {
-            comparisonContainer.innerHTML = '<p>Añade colegios desde la barra de búsqueda para empezar a comparar.</p>';
-            return;
-        }
-
-        const areas = [
-            { key: 'puntajeGlobal', name: 'Puntaje Global', max: 500 },
-            { key: 'lecturaCritica', name: 'Lectura Crítica', max: 100 },
-            { key: 'matematicas', name: 'Matemáticas', max: 100 },
-            { key: 'sociales', name: 'Sociales y Ciudadanas', max: 100 },
-            { key: 'naturales', name: 'Ciencias Naturales', max: 100 },
-            { key: 'ingles', name: 'Inglés', max: 100 }
-        ];
-
-        let tableHTML = '<table class="comparison-table"><thead><tr><th>Área de Conocimiento</th>';
-        selectedSchools.forEach(school => {
-            tableHTML += `<th>${school.institucion}<br><small>${school.municipio}</small></th>`;
-        });
-        tableHTML += '</tr></thead><tbody>';
-
-        areas.forEach(area => {
-            tableHTML += `<tr><td><strong>${area.name}</strong></td>`;
-            selectedSchools.forEach(school => {
-                const score = school[area.key] || 0;
-                const levelClass = area.key === 'puntajeGlobal' ? getPuntajeGlobalLevelClass(score) : getAreaLevelClass(area.key, score);
-                const barWidth = (score / area.max) * 100;
-                tableHTML += `
-                    <td>
-                        <div class="score-bar-container">
-                            <div class="score-bar ${levelClass}" style="width: ${barWidth}%;"></div>
-                            <span class="score-bar-text">${score}</span>
-                        </div>
-                    </td>`;
-            });
-            tableHTML += '</tr>';
-        });
-
-        tableHTML += '</tbody></table>';
-        comparisonContainer.innerHTML = tableHTML;
-    }
+    <!-- Importar la fuente Barlow Condensed desde Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700&display=swap" rel="stylesheet">
     
-    // Al cargar la página por primera vez, mostramos la tabla vacía.
-    renderUI();
-});
+    <!-- Enlace corregido a la hoja de estilos. La barra '/' al inicio es importante. -->
+    <link rel="stylesheet" href="/style.css">
+</head>
 
+<body>
+
+    <!-- ============== ENCABEZADO Y NAVEGACIÓN PRINCIPAL ============== -->
+    <header class="header">
+        <!-- Logo de la empresa -->
+        <img src="/logo.png" alt="Logo del Grupo Edúcate Colombia" class="logo">
+        
+        <!-- Menú de navegación. La clase 'active' resalta la página actual. -->
+        <nav>
+            <a href="/index.html">Consulta Básica</a>
+            <a href="/comparador.html" class="active">Comparador Avanzado</a>
+        </nav>
+    </header>
+
+    <!-- ============== CONTENIDO PRINCIPAL DE LA PÁGINA ============== -->
+    <main class="container">
+        
+        <!-- Título y descripción de la sección -->
+        <h1>Comparador Avanzado de Colegios</h1>
+        <p>Busca y selecciona dos o más colegios para comparar sus resultados en detalle, área por área.</p>
+        
+        <!-- Contenedor de búsqueda con funcionalidad de autocompletado -->
+        <div class="comparator-search-container">
+            <input type="text" id="comparatorSearchInput" placeholder="Escribe el nombre de un colegio para añadirlo...">
+            <!-- Este div mostrará las sugerencias de búsqueda que genera JavaScript -->
+            <div id="suggestion-box"></div>
+        </div>
+        
+        <!-- Contenedor para mostrar los colegios seleccionados como etiquetas interactivas -->
+        <div id="selected-schools-tags">
+            <!-- Las etiquetas de los colegios que selecciones aparecerán aquí -->
+        </div>
+        
+        <!-- Contenedor donde JavaScript insertará la tabla de comparación detallada -->
+        <div id="comparison-table-container">
+            <p>Añade colegios desde la barra de búsqueda para empezar a comparar.</p>
+        </div>
+        
+    </main>
+    
+    <!-- ============== PIE DE PÁGINA ============== -->
+    <footer class="footer">
+        <p>&copy; 2025 Grupo Edúcate Colombia. Todos los derechos reservados.</p>
+    </footer>
+
+    <!-- ============== ENLACE AL ARCHIVO JAVASCRIPT (RUTA CORREGIDA) ============== -->
+    <!-- Enlazamos al script específico para esta página con la ruta corregida. -->
+    <script src="/comparador.js"></script>
+
+</body>
+</html>
