@@ -274,3 +274,29 @@ button:hover {
     font-size: 14px;
     border-top: 1px solid #eee;
 }
+
+/* ============== NUEVOS ESTILOS PARA EL COMPARADOR SIMPLE ============== */
+.comparison-section {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center; /* Centra el botón de comparar */
+}
+
+.comparator-input-group {
+    width: 100%;
+    position: relative; /* Necesario para posicionar la caja de sugerencias */
+}
+
+.comparator-input-group label {
+    font-weight: 700;
+    font-size: 18px;
+    margin-bottom: 8px;
+    display: block;
+    color: #005A9C;
+}
+
+#compareButton {
+    width: 200px; /* Ancho fijo para el botón */
+    margin-top: 10px;
+}
