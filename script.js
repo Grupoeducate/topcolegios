@@ -139,7 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return 'level-insuficiente';
     }
 
-        function displayResults(dataToDisplay) {
+           function displayResults(dataToDisplay) {
         resultsContainer.innerHTML = '';
         if (!dataToDisplay || dataToDisplay.length === 0) {
             resultsContainer.innerHTML = '<p>No se encontraron resultados para los criterios seleccionados.</p>';
@@ -149,11 +149,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const table = document.createElement('table');
         table.className = 'results-table';
 
-        // Añadimos la nueva columna "Puesto" al encabezado de la tabla
+        // 1. AJUSTE: Cambiamos el encabezado para mostrar las dos nuevas columnas de ranking.
         table.innerHTML = `
             <thead>
                 <tr>
-                    <th class="rank-col">Puesto</th>
+                    <th class="rank-col">Pto. Nal.</th>
+                    <th class="rank-col">Pto. Cal.</th>
                     <th>Institución</th>
                     <th>Municipio</th>
                     <th>Puntaje Global</th>
@@ -166,12 +167,15 @@ document.addEventListener('DOMContentLoaded', () => {
         dataToDisplay.forEach(school => {
             const row = document.createElement('tr');
             
-            // Lectura de datos del JSON, incluyendo el puesto
-            const puesto = school['PTO.'] || 'N/A';
+            // 2. AJUSTE: Leemos las nuevas propiedades del JSON para los puestos.
+            const ptoNal = school['PTO. NAL.'] || 'N/A';
+            const ptoCal = school['PTO. CAL.'] || 'N/A';
+            
             const puntaje = parseInt(school['PUNT. GLOBAL'], 10) || 0;
             const institucion = school['INSTITUCIÓN'] || 'N/A';
             const municipio = school['MUNICIPIO'] || 'N/A';
-            const sector = school['SECTOR'] || 'N/A';
+            // Ajustamos el nombre de la clave para el sector si también cambió.
+            const sector = school['SECTOR'] || school['NAT.'] || 'N/A';
             
             const lc = school['LC'] || 'N/A';
             const mat = school['MAT'] || 'N/A';
@@ -182,9 +186,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const levelClass = getPuntajeGlobalLevelClass(puntaje);
             const barWidth = (puntaje / 500) * 100;
             
-            // Construcción del HTML para la fila, añadiendo la celda del puesto al principio
+            // 3. AJUSTE: Construimos la fila con las dos nuevas celdas de ranking al principio.
             row.innerHTML = `
-                <td class="rank-col"><strong>#${puesto}</strong></td>
+                <td class="rank-col"><strong>#${ptoNal}</strong></td>
+                <td class="rank-col"><strong>#${ptoCal}</strong></td>
                 <td>
                     <strong>${institucion}</strong>
                     <div class="area-scores">
@@ -210,5 +215,7 @@ document.addEventListener('DOMContentLoaded', () => {
         resultsContainer.appendChild(table);
     }
 
+
 });
+
 
