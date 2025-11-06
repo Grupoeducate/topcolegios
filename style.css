@@ -275,35 +275,59 @@ button:hover {
     border-top: 1px solid #eee;
 }
 
-/* ============== NUEVOS ESTILOS PARA EL COMPARADOR SIMPLE ============== */
+/* ============== ESTILOS ACTUALIZADOS PARA EL COMPARADOR ============== */
 .comparison-section {
     display: flex;
     flex-direction: column;
     gap: 20px;
-    align-items: center; /* Centra el botón de comparar */
+    align-items: center;
+}
+
+/* Nuevo contenedor para poner los inputs en línea */
+.comparator-inputs-container {
+    display: flex;
+    gap: 20px;
+    width: 100%;
 }
 
 .comparator-input-group {
-    width: 100%;
-    position: relative; /* Necesario para posicionar la caja de sugerencias */
+    flex: 1; /* Cada grupo de input ocupa el 50% del espacio */
+    position: relative;
 }
 
 .comparator-input-group label {
     font-weight: 700;
-    font-size: 18px;
+    font-size: 20px; /* Tamaño de fuente más alto para las etiquetas */
     margin-bottom: 8px;
     display: block;
     color: #005A9C;
 }
 
 #compareButton {
-    width: 200px; /* Ancho fijo para el botón */
+    width: 250px;
+    padding: 15px; /* Botón más grande */
+    font-size: 18px;
     margin-top: 10px;
 }
-/* ============== NUEVO ESTILO PARA LA COLUMNA DE RANKING ============== */
-.rank-col {
-    width: 80px; /* Ancho fijo para la columna del puesto */
-    text-align: center !important; /* Forzar la alineación al centro */
-    font-size: 20px; /* Un poco más grande para destacar */
+
+/* Aumentar fuente de la tabla de comparación */
+.comparison-table {
+    font-size: 18px;
 }
+
+/* Estilo para la fila de información extra (Puestos, Calendario) */
+.comparison-table .info-row td {
+    background-color: #f8f9fa;
+    font-weight: bold;
+    color: #343a40;
+}
+
+/* Media Query para pantallas pequeñas (móviles) */
+@media (max-width: 768px) {
+    .comparator-inputs-container {
+        flex-direction: column; /* Los inputs se apilan verticalmente en móviles */
+    }
+}
+
+
 
