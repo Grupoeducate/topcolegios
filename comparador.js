@@ -77,8 +77,13 @@ document.addEventListener('DOMContentLoaded', () => {
         renderComparisonTable(selectedSchool1, selectedSchool2);
     });
 
-    function renderComparisonTable(school1, school2) {
+       function renderComparisonTable(school1, school2) {
         const areas = [
+            // Nuevas filas de información
+            { key: 'PTO. NAL.', name: 'Puesto Nacional', isRank: true },
+            { key: 'PTO. CAL.', name: 'Puesto Calendario', isRank: true },
+            { key: 'CAL', name: 'Calendario', isInfo: true },
+            // Filas de puntajes
             { key: 'PUNT. GLOBAL', name: 'Puntaje Global', max: 500 },
             { key: 'LC', name: 'Lectura Crítica', max: 100 },
             { key: 'MAT', name: 'Matemáticas', max: 100 },
@@ -91,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <table class="comparison-table">
                 <thead>
                     <tr>
-                        <th>Área de Conocimiento</th>
+                        <th>Concepto</th>
                         <th>${school1['INSTITUCIÓN']}</th>
                         <th>${school2['INSTITUCIÓN']}</th>
                     </tr>
@@ -99,19 +104,34 @@ document.addEventListener('DOMContentLoaded', () => {
                 <tbody>`;
 
         areas.forEach(area => {
-            tableHTML += `<tr><td><strong>${area.name}</strong></td>`;
+            // Añadimos una clase 'info-row' para las filas que no son de puntaje
+            const rowClass = area.isRank || area.isInfo ? 'info-row' : '';
+            tableHTML += `<tr class="${rowClass}"><td><strong>${area.name}</strong></td>`;
+            
             [school1, school2].forEach(school => {
-                const score = school[area.key] || 0;
-                const numScore = parseInt(score, 10) || 0;
-                const levelClass = area.key === 'PUNT. GLOBAL' ? getPuntajeGlobalLevelClass(numScore) : getAreaLevelClass(area.key, numScore);
-                const barWidth = (numScore / area.max) * 100;
-                tableHTML += `
-                    <td>
-                        <div class="score-bar-container">
-                            <div class="score-bar ${levelClass}" style="width: ${barWidth}%;"></div>
-                            <span class="score-bar-text">${numScore}</span>
-                        </div>
-                    </td>`;
+                const value = school[area.key] || 'N/A';
+                
+                // Si es un puesto, mostramos el número con #
+                if (area.isRank) {
+                    tableHTML += `<td>#${value}</td>`;
+                } 
+                // Si es información (como el Calendario), mostramos el texto
+                else if (area.isInfo) {
+                    tableHTML += `<td>${value}</td>`;
+                }
+                // Si es un puntaje, mostramos la barra de colores
+                else {
+                    const numScore = parseInt(value, 10) || 0;
+                    const levelClass = area.key === 'PUNT. GLOBAL' ? getPuntajeGlobalLevelClass(numScore) : getAreaLevelClass(area.key, numScore);
+                    const barWidth = (numScore / area.max) * 100;
+                    tableHTML += `
+                        <td>
+                            <div class="score-bar-container">
+                                <div class="score-bar ${levelClass}" style="width: ${barWidth}%;"></div>
+                                <span class="score-bar-text">${numScore}</span>
+                            </div>
+                        </td>`;
+                }
             });
             tableHTML += '</tr>';
         });
@@ -119,6 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
         tableHTML += '</tbody></table>';
         comparisonContainer.innerHTML = tableHTML;
     }
+
 
     // --- Funciones de ayuda (niveles y alertas) ---
     function showAlert(message) {
@@ -142,3 +163,4 @@ document.addEventListener('DOMContentLoaded', () => {
         return 'level-insuficiente';
     };
 });
+
