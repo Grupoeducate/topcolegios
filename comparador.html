@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Comparador Avanzado - Grupo Edúcate Colombia</title>
+    <title>Comparar Colegios - Grupo Edúcate Colombia</title>
     <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -12,41 +12,36 @@
         <img src="logo.png" alt="Logo del Grupo Edúcate Colombia" class="logo">
         <nav>
             <a href="index.html">Consulta Básica</a>
-            <a href="comparador.html" class="active">Comparador Avanzado</a>
+            <a href="comparador.html" class="active">Comparar Colegios</a>
         </nav>
     </header>
 
     <main class="container">
-        <h1>Comparador de Colegios</h1>
-        <p>Escribe el nombre de dos colegios en las cajas de texto. A medida que escribas, aparecerán sugerencias. Haz clic en una sugerencia para seleccionarla y luego presiona "Comparar".</p>
+        <h1>Comparar Colegios</h1>
+        <p>Escribe el nombre de dos colegios. Selecciona una sugerencia para cada uno y luego presiona "Comparar".</p>
         
-        <!-- Contenedor para mensajes de alerta -->
         <div id="alert-container"></div>
         
-        <!-- Nueva sección de comparación -->
         <div class="comparison-section">
-            <!-- Contenedor para el primer colegio -->
-            <div class="comparator-input-group">
-                <label for="colegio1Input">Colegio 1:</label>
-                <input type="text" id="colegio1Input" placeholder="Busca el primer colegio..." autocomplete="off">
-                <div class="suggestion-box" id="suggestion-box1"></div>
+            <!-- Nuevo contenedor para los inputs en línea -->
+            <div class="comparator-inputs-container">
+                <div class="comparator-input-group">
+                    <label for="colegio1Input">Colegio 1:</label>
+                    <input type="text" id="colegio1Input" placeholder="Busca el primer colegio..." autocomplete="off">
+                    <div class="suggestion-box" id="suggestion-box1"></div>
+                </div>
+                
+                <div class="comparator-input-group">
+                    <label for="colegio2Input">Colegio 2:</label>
+                    <input type="text" id="colegio2Input" placeholder="Busca el segundo colegio..." autocomplete="off">
+                    <div class="suggestion-box" id="suggestion-box2"></div>
+                </div>
             </div>
             
-            <!-- Contenedor para el segundo colegio -->
-            <div class="comparator-input-group">
-                <label for="colegio2Input">Colegio 2:</label>
-                <input type="text" id="colegio2Input" placeholder="Busca el segundo colegio..." autocomplete="off">
-                <div class="suggestion-box" id="suggestion-box2"></div>
-            </div>
-            
-            <!-- Botón para iniciar la comparación -->
             <button id="compareButton">Comparar</button>
         </div>
         
-        <!-- Contenedor donde se mostrará la tabla de comparación -->
-        <div id="comparison-table-container">
-            <!-- Los resultados de la comparación aparecerán aquí -->
-        </div>
+        <div id="comparison-table-container"></div>
     </main>
     
     <footer class="footer">
